@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Birthday Reminder</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+      }
+
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: #2c3e50;
+        font-weight: bold;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
+      }
+
+      button {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 16px;
+        transition: background 0.3s;
+      }
+
+      button:hover {
+        background: #2ecc71;
+      }
+
+      .error {
+        color: #e74c3c;
+        font-size: 14px;
+        margin-top: 5px;
+      }
+
+      .success {
+        color: #3498db;
+        text-align: center;
+        margin-top: 20px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎂 Welcome To My Birthday Reminder APP</h1>
+      <form id="birthdayForm">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required />
+          <div class="error" id="usernameError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+          <div class="error" id="emailError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="dateOfBirth">Date of Birth</label>
+          <input type="date" id="dateOfBirth" name="dateOfBirth" required />
+          <div class="error" id="dateError"></div>
+        </div>
+
+        <button type="submit">Add Birthday</button>
+      </form>
+      <div class="success" id="successMessage">
+        Birthday added successfully, Thank you! 🎉
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById('birthdayForm')
+        .addEventListener('submit', async (e) => {
+          e.preventDefault()
+
+          // Clear previous errors
+          document
+            .querySelectorAll('.error')
+            .forEach((el) => (el.textContent = ''))
+          document.getElementById('successMessage').style.display = 'none'
+
+          const formData = {
+            username: document.getElementById('username').value,
+            email: document.getElementById('email').value,
+            dateOfBirth: document.getElementById('dateOfBirth').value,
+          }
+
+          try {
+            const response = await fetch('/api/users', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(formData),
+            })
+
+            const data = await response.json()
+
+            if (response.ok) {
+              document.getElementById('successMessage').style.display = 'block'
+              document.getElementById('birthdayForm').reset()
+            } else {
+              if (data.errors) {
+                data.errors.forEach((error) => {
+                  const errorElement = document.getElementById(
+                    `${error.param}Error`
+                  )
+                  if (errorElement) {
+                    errorElement.textContent = error.msg
+                  }
+                })
+              }
+            }
+          } catch (error) {
+            console.error('Error:', error)
+          }
+        })
+    </script>
+  </body>
+</html>
