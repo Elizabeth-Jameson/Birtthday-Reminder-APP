@@ -3,8 +3,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const path = require('path')
-const userRoutes = require('./routes/userRoutes')
-const birthdayJob = require('./config/cron')
+const userRoutes = require('./Birthday-Reminder-main/routes/userRoutes')
+const birthdayJob = require('./Birthday-Reminder-main/config/cron')
 
 const app = express()
 
